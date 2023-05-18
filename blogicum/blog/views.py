@@ -46,10 +46,10 @@ class CommentMixin:
 
     def dispatch(
             self, request: HttpRequest, *args: Any, **kwargs: Any
-            ) -> HttpResponse:
+    ) -> HttpResponse:
         comment: Comment = get_object_or_404(
             Comment, id=self.kwargs['comment_id']
-            )
+        )
         if comment.author != request.user:
             return redirect('blog:post_detail', pk=comment.post.pk)
         return super().dispatch(request, *args, **kwargs)
@@ -159,7 +159,7 @@ class PostUpdateView(PostMixin, LoginRequiredMixin, UpdateView):
 
     def dispatch(
             self, request: HttpRequest, *args: Any, **kwargs: Any
-            ) -> HttpResponse:
+    ) -> HttpResponse:
         post = get_object_or_404(Post, pk=kwargs['pk'])
         if request.user != post.author:
             return redirect('blog:post_detail', pk=post.pk)

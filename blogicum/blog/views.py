@@ -1,4 +1,3 @@
-
 from typing import Any, Dict, Type
 
 from django.db.models.query import QuerySet
@@ -193,5 +192,5 @@ class CommentUpdateView(CommentMixin, LoginRequiredMixin, UpdateView):
     form_class: Type[CommentForm] = CommentForm
 
 
-class СommentDeleteView(CommentMixin, LoginRequiredMixin, DeleteView):
+class CommentDeleteView(CommentMixin, LoginRequiredMixin, DeleteView):
     pass

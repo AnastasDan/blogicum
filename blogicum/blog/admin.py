@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Location, Post
+from .models import Category, Location, Post, Comment
 
 admin.site.empty_value_display = 'Не задано'
 
@@ -10,18 +10,26 @@ class PostInline(admin.StackedInline):
     extra = 0
 
 
+@admin.display(description='Количество комментариев')
+def comment_count(obj):
+    return obj.comments.count()
+
+
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = (
         PostInline,
     )
 
 
+@admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     inlines = (
         PostInline,
     )
 
 
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
@@ -30,6 +38,7 @@ class PostAdmin(admin.ModelAdmin):
         'author',
         'category',
         'location',
+        comment_count,
     )
     list_editable = (
         'is_published',
@@ -40,6 +49,6 @@ class PostAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
 
 
-admin.site.register(Post, PostAdmin)
-admin.site.register(Location, LocationAdmin)
-admin.site.register(Category, CategoryAdmin)
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    pass

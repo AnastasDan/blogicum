@@ -5,8 +5,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
-from .models import Post, Comment
 from .consts import PAGINATE_BY
+from .models import Comment, Post
 
 
 class PostsMixin:

@@ -1,24 +1,24 @@
 from typing import Any
 
-from django.db.models.query import QuerySet
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic import (
-    ListView,
     CreateView,
-    UpdateView,
     DeleteView,
     DetailView,
+    ListView,
+    UpdateView
 )
 
-from .models import Category, Post, User, Comment
-from .forms import UserForm, PostForm, CommentForm
 from .consts import PAGINATE_BY
-from .mixins import PostMixin, PostsMixin, CommentMixin
+from .forms import CommentForm, PostForm, UserForm
+from .mixins import CommentMixin, PostMixin, PostsMixin
+from .models import Category, Comment, Post, User
 
 
 class IndexListView(PostsMixin, ListView):
@@ -141,21 +141,18 @@ class PostDeleteView(PostMixin, LoginRequiredMixin, DeleteView):
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
-    target_post = None
     model = Comment
     form_class = CommentForm
 
-    def dispatch(self, request, *args, **kwargs) -> HttpResponse:
-        self.target_post: Post = get_object_or_404(Post, pk=kwargs['pk'])
-        return super().dispatch(request, *args, **kwargs)
-
     def form_valid(self, form: CommentForm) -> HttpResponse:
         form.instance.author: User = self.request.user
-        form.instance.post: Post = self.target_post
+        form.instance.post: Post = get_object_or_404(
+            Post, pk=self.kwargs['pk']
+        )
         return super().form_valid(form)
 
     def get_success_url(self) -> str:
-        return reverse('blog:post_detail', kwargs={'pk': self.target_post.pk})
+        return reverse('blog:post_detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class CommentUpdateView(CommentMixin, LoginRequiredMixin, UpdateView):

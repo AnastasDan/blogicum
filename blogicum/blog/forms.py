@@ -1,7 +1,7 @@
 from django import forms
 from django.utils import timezone
 
-from .models import User, Post, Comment
+from .models import Comment, Post, User
 
 
 class UserForm(forms.ModelForm):
